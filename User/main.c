@@ -1,15 +1,15 @@
-#include "main.h"
+#include "stm32f4xx.h"
 
 int main(void)
 {
-  *(unsigned int *)(0x40023800 + 0x30) |= 0x14; // RCC_AHB1ENR = (1 << 4) | (1 << 2)
-  GPIOC->MODER |= 1 << (2 * 13); // GPIOC_MODER
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIOEEN;//0x14
+  GPIOC->MODER |= GPIO_MODER_MODER13_0;//1 << (2 * 13)
   
   while(1)
   {
-    if((GPIOE->IDR & (1 << 4)) == 0) // GPIOE_IDR
-      GPIOC->ODR &= ~(unsigned int)(1 << 13); // GPIOC_ODR
+    if((GPIOE->IDR & GPIO_IDR_ID4) == 0)
+      GPIOC->ODR &= ~GPIO_ODR_OD13;
     else
-      GPIOC->ODR |= (1 << 13); // GPIOC_ODR
+      GPIOC->ODR |= GPIO_ODR_OD13;
   }
 }
